@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>おえかきアプリ</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("service-worker.js")
+        .then(() => console.log("Service Worker 登録完了"))
+        .catch(e => console.error("SW登録失敗", e));
+    }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>おえかきしよう！</h1>
+        <div class="controls">
+            <div class="color-palette">
+                <button class="color-button active" data-color="#000000" style="background-color: #000000;"></button>
+                <button class="color-button" data-color="#FF0000" style="background-color: #FF0000;"></button>
+                <button class="color-button" data-color="#0000FF" style="background-color: #0000FF;"></button>
+                <button class="color-button" data-color="#008000" style="background-color: #008000;"></button>
+                <button class="color-button" data-color="#FFFF00" style="background-color: #FFFF00;"></button>
+            </div>
+            <button id="showAnimalButton">どうぶつをだす</button>
+            <button id="undoButton">一つもどす</button>
+            <button id="clearButton">ぜんぶけす</button>
+        </div>
+        <canvas id="drawingCanvas"></canvas>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

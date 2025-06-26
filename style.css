@@ -1,0 +1,74 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+    font-family: sans-serif;
+}
+
+.container {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+h1 {
+    color: #333;
+    font-size: 1.8em;
+    margin-bottom: 20px;
+}
+
+.controls {
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap; /* ボタンが多すぎるときに折り返す */
+    justify-content: center;
+    gap: 10px;
+    align-items: center;
+}
+
+.color-palette {
+    display: flex;
+    gap: 5px;
+    margin-right: 10px; /* 他のボタンとの間隔 */
+}
+
+.color-button {
+    width: 40px;
+    height: 40px;
+    border: 2px solid #ccc;
+    border-radius: 50%; /* 丸いボタン */
+    cursor: pointer;
+    transition: transform 0.2s, border-color 0.2s;
+    padding: 0; /* 余分なパディングを削除 */
+}
+
+.color-button.active {
+    border-color: #333; /* 選択中の色を強調 */
+    transform: scale(1.1); /* 選択中の色を少し大きく */
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #87CEEB; /* スカイブルー */
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #6495ED; /* コーポレートブルー */
+}
+
+canvas {
+    border: 2px solid #ccc;
+    background-color: #fff;
+    touch-action: none; /* タッチイベントのデフォルト動作を無効化してスクロールを防ぐ */
+}
