@@ -6,12 +6,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const undoButton = document.getElementById('undoButton');
     const clearButton = document.getElementById('clearButton');
 
-    // キャンバスのサイズを設定（画面サイズに合わせる）
-    const canvasWidth = Math.min(window.innerWidth * 0.8, 600);
-    const canvasHeight = Math.min(window.innerHeight * 0.6, 400);
-    canvas.width = canvasWidth;
-    canvas.height = canvasHeight;
-
     let drawing = false;
     let currentColor = '#000000'; // 初期色を黒に設定
     let lastX = 0;
@@ -25,7 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
     ctx.lineJoin = 'round'; // 線と線のつなぎ目を丸く
 
     // --- 動物の画像ファイルパス ---
-    // ここをダウンロードして保存したローカルファイルパスに置き換えてください
     const animalImages = {
         dog: 'dog.png',
         cat: 'cat.png',
@@ -33,6 +26,23 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     let currentAnimalImage = null; // 現在表示されている動物の画像
+
+    // キャンバスサイズをウィンドウに合わせて調整する関数
+    function resizeCanvas() {
+        const container = canvas.parentElement;
+        // 親要素の幅・高さに合わせる
+        const width = container.clientWidth;
+        const height = container.clientHeight;
+        canvas.width = width;
+        canvas.height = height;
+        canvas.style.width = width + "px";
+        canvas.style.height = height + "px";
+        redrawCanvas();
+    }
+
+    // 初期化時とリサイズ時に呼び出し
+    window.addEventListener('load', resizeCanvas);
+    window.addEventListener('resize', resizeCanvas);
 
     // 色選択ボタンのイベントリスナー
     colorButtons.forEach(button => {
@@ -72,7 +82,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 画像を読み込んでキャンバスに描画
         const img = new Image();
-        // img.crossOrigin = "Anonymous"; // ローカルファイルからは不要
         img.src = imagePath;
         img.onload = () => {
             // 画像をキャンバスの中央に、アスペクト比を保ちつつ収まるように描画
@@ -100,6 +109,10 @@ document.addEventListener('DOMContentLoaded', () => {
         drawing = true;
         const { x, y } = getEventPos(e);
         [lastX, lastY] = [x, y];
+        ctx.strokeStyle = currentColor; // 色を設定
+        ctx.lineWidth = 10; // 線幅を設定
+        ctx.beginPath(); // 新しいパスを開始
+        ctx.moveTo(lastX, lastY); // 描画開始点を設定
         currentPath = [{ x: lastX, y: lastY, color: currentColor, width: ctx.lineWidth }];
     }
 
@@ -112,12 +125,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const { x, y } = getEventPos(e);
-        ctx.strokeStyle = currentColor;
-        ctx.lineWidth = 10;
-        ctx.beginPath();
-        ctx.moveTo(lastX, lastY);
-        ctx.lineTo(x, y);
-        ctx.stroke();
+        ctx.lineTo(x, y); // 現在の点まで線を描く
+        ctx.stroke(); // 実際に描画
 
         currentPath.push({ x: x, y: y, color: currentColor, width: ctx.lineWidth });
 
@@ -128,6 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function stopDrawing() {
         if (drawing) {
             drawing = false;
+            ctx.closePath(); // パスを閉じる
             if (currentPath.length > 1) {
                 drawingHistory.push(currentPath);
             }
@@ -142,8 +152,22 @@ document.addEventListener('DOMContentLoaded', () => {
         // もし動物の画像が表示されていれば、まずそれを描画
         if (currentAnimalImage) {
             ctx.globalAlpha = 0.4; // 透明度を設定
-            ctx.drawImage(currentAnimalImage.img, currentAnimalImage.x, currentAnimalImage.y, currentAnimalImage.width, currentAnimalImage.height);
+            // 画像の描画も新しいキャンバスサイズに合わせて再計算
+            const hRatio = canvas.width / currentAnimalImage.img.width;
+            const vRatio = canvas.height / currentAnimalImage.img.height;
+            const ratio = Math.min(hRatio, vRatio);
+            const centerShiftX = (canvas.width - currentAnimalImage.img.width * ratio) / 2;
+            const centerShiftY = (canvas.height - currentAnimalImage.img.height * ratio) / 2;
+
+            ctx.drawImage(currentAnimalImage.img, 0, 0, currentAnimalImage.img.width, currentAnimalImage.img.height,
+                          centerShiftX, centerShiftY, currentAnimalImage.img.width * ratio, currentAnimalImage.img.height * ratio);
             ctx.globalAlpha = 1.0; // 透明度を元に戻す
+
+            // currentAnimalImageの保存情報も更新
+            currentAnimalImage.x = centerShiftX;
+            currentAnimalImage.y = centerShiftY;
+            currentAnimalImage.width = currentAnimalImage.img.width * ratio;
+            currentAnimalImage.height = currentAnimalImage.img.height * ratio;
         }
 
         drawingHistory.forEach(path => {
@@ -185,9 +209,13 @@ document.addEventListener('DOMContentLoaded', () => {
             clientY = e.clientY;
         }
 
+        // キャンバスのCSSサイズと実際の描画サイズの比率で補正
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+
         return {
-            x: clientX - rect.left,
-            y: clientY - rect.top
+            x: (clientX - rect.left) * scaleX,
+            y: (clientY - rect.top) * scaleY
         };
     }
 });

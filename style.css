@@ -1,29 +1,24 @@
 body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    margin: 0;
     background-color: #f0f0f0;
     font-family: sans-serif;
 }
 
 .container {
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
+    border-radius: 20px;
+    width: 90vw;    
+    height: 95vh;
+    margin: auto;   /* 中央寄せ */
 }
 
 h1 {
     color: #333;
     font-size: 1.8em;
     margin-bottom: 20px;
+    text-align: center;
 }
 
 .controls {
-    margin-bottom: 20px;
+    margin-bottom: 16px;
     display: flex;
     flex-wrap: wrap; /* ボタンが多すぎるときに折り返す */
     justify-content: center;
@@ -49,7 +44,7 @@ h1 {
 
 .color-button.active {
     border-color: #333; /* 選択中の色を強調 */
-    transform: scale(1.1); /* 選択中の色を少し大きく */
+    transform: scale(1.2); /* 選択中の色を少し大きく */
 }
 
 button {
@@ -67,8 +62,19 @@ button:hover {
     background-color: #6495ED; /* コーポレートブルー */
 }
 
-canvas {
-    border: 2px solid #ccc;
-    background-color: #fff;
-    touch-action: none; /* タッチイベントのデフォルト動作を無効化してスクロールを防ぐ */
+.canvas-area {
+    background-color: blueviolet;
+    border-radius: 20px;
+    height: 80vh;
+    margin: 20px;
 }
+
+canvas {
+    background-color: #f4f5f7;
+    border: #777 solid 2px;
+    border-radius: 20px;
+    height: 100%;
+    width: 100%;
+}
+
+
